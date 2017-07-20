@@ -1,4 +1,4 @@
-#!cloud-config
+#cloud-config
 
 # coreos-cloudinit -validate --from-file paz.cloud-config
 # sudo coreos-cloudinit --from-file paz.cloud-config

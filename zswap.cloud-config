@@ -1,4 +1,4 @@
-#!cloud-config
+#cloud-config
 
 # coreos-cloudinit -validate --from-file zswap.cloud-config
 # sudo coreos-cloudinit --from-file zswap.cloud-config
