@@ -2,6 +2,7 @@
 
 # coreos-cloudinit -validate --from-file paz.cloud-config
 # sudo coreos-cloudinit --from-file paz.cloud-config
+# sudo coreos-cloudinit --from-url https://github.com/Kuchiriel/coreos-configs/raw/master/paz.cloud-config
 
 coreos:
   update:
