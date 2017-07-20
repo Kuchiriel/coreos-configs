@@ -4,8 +4,7 @@ If you are using [Digital Ocean](digitalocean.com/), just copy the content from 
 
 ![](https://i.imgur.com/0X3jF5t.png)
 
-This is the same as manually putting it in 
-`/var/lib/coreos-install/user_data`
+If you have already installed CoreOS in a VM or Vagrant. This is the same as manually putting the files in: `/var/lib/coreos-install/user_data`
 
 But if you want, you can use [wget](https://en.wikipedia.org/wiki/Wget) to download the [raw content](https://raw.githubusercontent.com/Kuchiriel/coreos-configs/master/docker-compose.cloud-config) from GitHub. 
 
