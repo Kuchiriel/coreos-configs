@@ -1,4 +1,4 @@
-# cloud-config
+#!cloud-config
 
 # ↓ Se for instalar por este arquivo
 # Suba este arquivo na vps com o nome paz.cloud-config
