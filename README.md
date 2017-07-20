@@ -1,6 +1,6 @@
 ## How to install?
 
-If you are using [Digital Ocean](digitalocean.com/), just copy the content from the files and paste in the User Data field.
+If you are using [Digital Ocean](https://www.digitalocean.com/products/), just copy the content from the files and paste in the User Data field.
 
 ![](https://i.imgur.com/0X3jF5t.png)
 
