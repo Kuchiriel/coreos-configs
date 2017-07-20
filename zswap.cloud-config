@@ -29,7 +29,7 @@ coreos:
         RemainAfterExit=yes
         [Install]
         WantedBy=multi-user.target
-        - name: create-swap.service
+    - name: create-swap.service
       command: start
       runtime: true
       content: |
