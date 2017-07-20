@@ -1,15 +1,7 @@
 #!cloud-config
 
-# ↓ Se for instalar por este arquivo
-# Suba este arquivo na vps com o nome docker-compose.cloud-config
-# ↓ Execute os comandos abaixo
 # coreos-cloudinit -validate --from-file docker-compose.cloud-config
 # sudo coreos-cloudinit --from-file docker-compose.cloud-config
-
-# ↓ Se for instalar pelo campo user data na Digital Ocean
-# Apenas copie todo o conteúdo deste arquivo e cole na área de texto
-# você estará na realidade editando o arquivo localizado aqui
-# /var/lib/coreos-install/user_data
 
 coreos:
   units:
