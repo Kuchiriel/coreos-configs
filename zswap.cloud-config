@@ -68,8 +68,3 @@ write_files:
     content: |
       vm.swappiness=1
       vm.vfs_cache_pressure=50
-
-# Why vm.swappiness=1 ?
-# Because in Kernel version 3.5 and over:
-# It sets the minimum amount of swapping without disabling it entirely.
-# Reference https://en.wikipedia.org/wiki/Swappiness
