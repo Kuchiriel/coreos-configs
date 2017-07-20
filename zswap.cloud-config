@@ -1,0 +1,83 @@
+# cloud-config
+
+# ↓ Se for instalar por este arquivo
+# Suba este arquivo na vps com o nome zswap.cloud-config
+# ↓ Execute os comandos abaixo
+# coreos-cloudinit -validate --from-file zswap.cloud-config
+# sudo coreos-cloudinit --from-file zswap.cloud-config
+
+# ↓ Se for instalar pelo campo user data na Digital Ocean
+# Apenas copie todo o conteúdo deste arquivo e cole na área de texto
+# você estará na realidade editando o arquivo localizado aqui
+# /var/lib/coreos-install/user_data
+
+coreos:
+  units:
+    - name: install-zswap.service
+      command: start
+      content: |
+        [Unit]
+        Description=Install zswap (compressed RAM block devices)
+        Before=zswap.service
+        [Service]
+        Type=oneshot
+        ExecStart=/usr/bin/mkdir -p /usr/lib/systemd/scripts/
+        ExecStart=/usr/bin/wget "https://github.com/Kuchiriel/zswap/releases/download/latest/zswap" -O /usr/lib/systemd/scripts/zswap
+        ExecStart=/usr/bin/chmod +x /usr/lib/systemd/scripts/zswap
+    - name: zswap.service
+      command: start
+      content: |
+        [Unit]
+        Description=Zswap service
+        [Service]
+        Type=oneshot
+        ExecStart=/usr/lib/systemd/scripts/zswap start
+        ExecStop=/usr/lib/systemd/scripts/zswap stop
+        ExecReload=/usr/lib/systemd/scripts/zswap restart
+        RemainAfterExit=yes
+        [Install]
+        WantedBy=multi-user.target
+        - name: create-swap.service
+      command: start
+      runtime: true
+      content: |
+        [Unit]
+        Description=Create swap file
+        Before=swap.service
+        [Service]
+        Type=oneshot
+        Environment="SWAPFILE=/1GiB.swap"
+        ExecStart=/usr/bin/touch ${SWAPFILE}
+        ExecStart=/usr/bin/chattr +C ${SWAPFILE}
+        ExecStart=/usr/bin/fallocate -l 1G ${SWAPFILE}
+        ExecStart=/usr/bin/chmod 600 ${SWAPFILE}
+        ExecStart=/usr/sbin/mkswap ${SWAPFILE}
+        [Install]
+        WantedBy=multi-user.target
+    - name: swap.service
+      command: start
+      content: |
+        [Unit]
+        Description=Turn on swap
+        [Service]
+        Type=oneshot
+        Environment="SWAPFILE=/1GiB.swap"
+        RemainAfterExit=true
+        ExecStartPre=/usr/sbin/losetup -f ${SWAPFILE}
+        ExecStart=/usr/bin/sh -c "/sbin/swapon $(/usr/sbin/losetup -j ${SWAPFILE} | /usr/bin/cut -d : -f 1)"
+        ExecStop=/usr/bin/sh -c "/sbin/swapoff $(/usr/sbin/losetup -j ${SWAPFILE} | /usr/bin/cut -d : -f 1)"
+        ExecStopPost=/usr/bin/sh -c "/usr/sbin/losetup -d $(/usr/sbin/losetup -j ${SWAPFILE} | /usr/bin/cut -d : -f 1)"
+        [Install]
+        WantedBy=multi-user.target
+write_files:
+  - path: /etc/sysctl.d/swap.conf
+    permissions: 0644
+    owner: root
+    content: |
+      vm.swappiness=1
+      vm.vfs_cache_pressure=50
+
+# Why vm.swappiness=1 ?
+# Because in Kernel version 3.5 and over:
+# It sets the minimum amount of swapping without disabling it entirely.
+# Reference https://en.wikipedia.org/wiki/Swappiness

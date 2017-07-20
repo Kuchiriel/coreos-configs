@@ -1,0 +1,181 @@
+# cloud-config
+
+# ↓ Se for instalar por este arquivo
+# Suba este arquivo na vps com o nome paz.cloud-config
+# ↓ Execute os comandos abaixo
+# coreos-cloudinit -validate --from-file paz.cloud-config
+# sudo coreos-cloudinit --from-file paz.cloud-config
+
+# ↓ Se for instalar pelo campo user data na Digital Ocean
+# Apenas copie todo o conteúdo deste arquivo e cole na área de texto
+# você estará na realidade editando o arquivo localizado aqui
+# /var/lib/coreos-install/user_data
+
+coreos:
+  update:
+    reboot-strategy: off
+  etcd: # Gera uma nova token para cada cluster único do https://discovery.etcd.io/new
+    discovery: https://discovery.etcd.io/fd19b335219fbb09c8ea615accb65476
+    addr: $public_ipv4:4001
+    peer-addr: $public_ipv4:7001
+  fleet:
+    public-ip: $public_ipv4
+  units:
+    - name: etcd2.service
+      command: start
+    - name: fleet.service
+      command: start
+    - name: docker.service
+      drop-ins:
+        - name: 50-docker-dns.conf
+          content: |
+              [Service]
+              Environment='DOCKER_OPTS=--restart=false -D --dns=$private_ipv4 --dns=8.8.8.8'
+    - name: create-swap.service
+      command: start
+      runtime: true
+      content: |
+        [Unit]
+        Description=Create swap file
+        Before=swap.service
+
+        [Service]
+        Type=oneshot
+        Environment="SWAPFILE=/1GiB.swap"
+        ExecStart=/usr/bin/touch ${SWAPFILE}
+        ExecStart=/usr/bin/chattr +C ${SWAPFILE}
+        ExecStart=/usr/bin/fallocate -l 2048m ${SWAPFILE}
+        ExecStart=/usr/bin/chmod 600 ${SWAPFILE}
+        ExecStart=/usr/sbin/mkswap ${SWAPFILE}
+
+        [Install]
+        WantedBy=multi-user.target
+    - name: swap.service
+      command: start
+      content: |
+        [Unit]
+        Description=Turn on swap
+
+        [Service]
+        Type=oneshot
+        Environment="SWAPFILE=/1GiB.swap"
+        RemainAfterExit=true
+        ExecStartPre=/usr/sbin/losetup -f ${SWAPFILE}
+        ExecStart=/usr/bin/sh -c "/sbin/swapon $(/usr/sbin/losetup -j ${SWAPFILE} | /usr/bin/cut -d : -f 1)"
+        ExecStop=/usr/bin/sh -c "/sbin/swapoff $(/usr/sbin/losetup -j ${SWAPFILE} | /usr/bin/cut -d : -f 1)"
+        ExecStopPost=/usr/bin/sh -c "/usr/sbin/losetup -d $(/usr/sbin/losetup -j ${SWAPFILE} | /usr/bin/cut -d : -f 1)"
+
+        [Install]
+        WantedBy=multi-user.target
+    - name: cadvisor.service
+      runtime: true
+      command: start
+      content: |
+        [Unit]
+        Description=Analyzes resource usage and performance characteristics of running containers.
+        After=docker.service
+        Requires=docker.service
+
+        [Service]
+        Restart=always
+        ExecStartPre=/usr/bin/docker pull google/cadvisor:latest
+        ExecStartPre=-/bin/bash -c " \
+          docker inspect cadvisor >/dev/null 2>&1 \
+          && docker rm -f cadvisor || true"
+        ExecStart=/usr/bin/docker run --volume=/var/run:/var/run:rw --volume=/sys/fs/cgroup/:/sys/fs/cgroup:ro --volume=/var/lib/docker/:/var/lib/docker:ro --publish=8080:8080 --name=cadvisor google/cadvisor:latest
+        ExecStop=/usr/bin/docker rm -f cadvisor
+    - name: paz-dnsmasq.service
+      runtime: true
+      command: start
+      content: |
+        [Unit]
+        Description=*.paz traffic will go to the private_ipv4 addr
+        After=docker.service
+        Requires=docker.service
+
+        After=etcd2.service
+        Requires=etcd2.service
+        After=fleet.service
+        Requires=fleet.service
+
+        [Service]
+        Restart=always
+        ExecStartPre=/usr/bin/docker pull tomgco/dnsmasq-catch:latest
+        ExecStartPre=-/bin/bash -c " \
+          docker inspect paz-dnsmasq >/dev/null 2>&1 \
+          && docker rm -f paz-dnsmasq || true"
+        ExecStart=/usr/bin/docker run -p $private_ipv4:53:53/udp --privileged --name=paz-dnsmasq tomgco/dnsmasq-catch paz $private_ipv4
+        ExecStop=/usr/bin/docker rm -f paz-dnsmasq
+    - name: paz-haproxy.service
+      runtime: true
+      command: start
+      content: |
+        [Unit]
+        Description=paz HAProxy instance that enables service discovery.
+        After=docker.service
+        Requires=docker.service
+
+        After=etcd2.service
+        Requires=etcd2.service
+        After=fleet.service
+        Requires=fleet.service
+
+        [Service]
+        User=core
+        Restart=always
+        RestartSec=5s
+        ExecStartPre=/usr/bin/docker pull quay.io/yldio/paz-haproxy:latest
+        ExecStartPre=-/bin/bash -c " \
+          docker inspect paz-haproxy >/dev/null 2>&1 \
+          && docker rm -f paz-haproxy || true"
+        ExecStart=/usr/bin/docker run -p 9090:9090 -p 1936:1936 -e ETCD=$private_ipv4:4001 --name paz-haproxy quay.io/yldio/paz-haproxy
+        ExecStop=/usr/bin/docker rm -f paz-haproxy
+        TimeoutStartSec=20m
+    - name: paz-pubkey-watcher.service
+      runtime: true
+      command: start
+      content: |
+        [Unit]
+        Description=Watch etcd for scheduler public key changes and update authorized_hosts.
+
+        After=etcd2.service
+        Requires=etcd2.service
+        After=fleet.service
+        Requires=fleet.service
+
+        [Service]
+        User=core
+        Restart=always
+        ExecStartPre=/home/core/bin/paz-pubkey-watcher.sh once
+        ExecStart=/home/core/bin/paz-pubkey-watcher.sh
+
+write_files:
+  - path: /etc/paz-environment
+    permissions: 0644
+    content: |
+        PAZ_PLATFORM=digitalocean
+        PAZ_DOMAIN=escolazion.com
+        PAZ_ORCHESTRATOR_DNS_DISABLED=true
+  - path: /home/core/bin/paz-pubkey-watcher.sh
+    owner: core
+    permissions: 0754
+    content: |
+        #!/bin/bash
+        set -e
+        if [[ "$1" == "once" ]]; then
+          FN=`mktemp /tmp/paz-pubkey.XXXX`
+          until etcdctl get /paz/config/scheduler/_pubkey 2>/dev/null > $FN.tmp; do sleep 2; done && base64 -d < $FN.tmp > $FN && /usr/bin/update-ssh-keys -u core -a paz-scheduler $FN
+          rm $FN $FN.tmp
+        else
+          while :; do
+            FN=`mktemp /tmp/paz-pubkey.XXXX`
+            etcdctl watch /paz/config/scheduler/_pubkey | base64 -d > $FN && /usr/bin/update-ssh-keys -u core -a paz-scheduler $FN;
+            rm $FN
+          done;
+        fi
+  - path: /etc/sysctl.d/swap.conf
+    permissions: 0644
+    owner: root
+    content: |
+      vm.swappiness=10
+      vm.vfs_cache_pressure=50
