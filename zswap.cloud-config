@@ -2,6 +2,7 @@
 
 # coreos-cloudinit -validate --from-file zswap.cloud-config
 # sudo coreos-cloudinit --from-file zswap.cloud-config
+# sudo coreos-cloudinit --from-url https://raw.githubusercontent.com/Kuchiriel/coreos-configs/master/zswap.cloud-config
 
 coreos:
   units:
