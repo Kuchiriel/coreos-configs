@@ -36,5 +36,5 @@ If you want to make it work with previous versions, you need to edit the selecte
 
 ![](https://i.imgur.com/JZbKTnE.png)
 
-[See this](https://github.com/docker/compose/releases) for more detail.
+[See this](https://github.com/docker/compose/releases) for more details.
 
