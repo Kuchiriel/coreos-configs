@@ -22,9 +22,10 @@ Every _.cloud-config_ file in this repository has some example commands approach
 
 ## Which ones are available now?
 
-By now, the following are available:
+By now, the following files are available:
 
 ### [docker-compose](https://github.com/Kuchiriel/coreos-configs/blob/master/docker-compose.cloud-config)
+Installs docker-compose.
 
 | CoreOS Version | Working? |
 | :------------: | :------: |
