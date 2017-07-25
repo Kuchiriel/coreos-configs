@@ -33,7 +33,7 @@ Installs docker-compose.
 | [1465.2.0 (beta)](https://coreos.com/releases/#1465.2.0)  | No  |
 | [1409.7.0 (stable)](https://coreos.com/releases/#1409.7.0)| No  |
 
-If you want to make docker-compose with previous versions of CoreOS, you need to edit the selected part of the file.
+If you want to make docker-compose work with previous versions of CoreOS, you need to edit this selected part of the file. It will alllow you to download an appropriate version of docker-compose which's target the compatible version of docker engine.
 
 ![](https://i.imgur.com/JZbKTnE.png)
 
