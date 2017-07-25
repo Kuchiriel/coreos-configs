@@ -16,7 +16,7 @@ Then, using a ssh shell (supposing you are running through a VPS), execute the f
 
 You can install direct from the URL as well: `sudo coreos-cloudinit --from-url https://github.com/Kuchiriel/coreos-configs/raw/master/`_your-file_`.cloud-config`
 
-Every _.cloud-config_ file in this repository has some example commands approaching different ways to install:
+Every _.cloud-config_ file in this repository has some example commands approaching different ways to install, which you can just copy and paste in the terminal:
 
 ![](https://i.imgur.com/ko9kUGu.png)
 
@@ -33,9 +33,9 @@ Installs docker-compose.
 | [1465.2.0 (beta)](https://coreos.com/releases/#1465.2.0)  | No  |
 | [1409.7.0 (stable)](https://coreos.com/releases/#1409.7.0)| No  |
 
-If you want to make it work with previous versions, you need to edit the selected part of the file.
+If you want to make docker-compose with previous versions of CoreOS, you need to edit the selected part of the file.
 
 ![](https://i.imgur.com/JZbKTnE.png)
 
-[See this](https://github.com/docker/compose/releases) for more details.
+[See this](https://github.com/docker/compose/releases) for more details on how to do this.
 
