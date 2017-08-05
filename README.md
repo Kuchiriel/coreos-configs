@@ -10,7 +10,7 @@ If you are using [Digital Ocean](https://www.digitalocean.com/products/), just c
 
 If you have already installed CoreOS in a VM or Vagrant. This is the same as manually putting the files in: `/var/lib/coreos-install/user_data` before installation.
 
-But if you want, you can use [wget](https://en.wikipedia.org/wiki/Wget)/[curl](https://pt.wikipedia.org/wiki/Curl_(Unix) to download the [raw content](https://raw.githubusercontent.com/Kuchiriel/coreos-configs/master/docker-compose.cloud-config) from GitHub.
+But if you want, you can use [wget](https://en.wikipedia.org/wiki/Wget) or [curl](https://pt.wikipedia.org/wiki/Curl_(Unix)) to download the [raw content](https://raw.githubusercontent.com/Kuchiriel/coreos-configs/master/docker-compose.cloud-config) from GitHub.
 
 Then, using a ssh shell (supposing you are running through a VPS), execute the following command: `sudo coreos-cloudinit --from-file` _your-file_`.cloud-config`, otherwise just use a vanilla terminal instead.
 
