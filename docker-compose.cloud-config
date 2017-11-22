@@ -14,5 +14,5 @@ coreos:
         [Service]
         Type=oneshot
         ExecStart=/usr/bin/mkdir -p /opt/bin/
-        ExecStart=/usr/bin/curl -o /opt/bin/docker-compose -sL "https://github.com/docker/compose/releases/download/1.15.0-rc1/docker-compose-linux-x86_64"
+        ExecStart=/usr/bin/curl -o /opt/bin/docker-compose -sL "https://github.com/docker/compose/releases/download/1.17.1/docker-compose-linux-x86_64"
         ExecStart=/usr/bin/chmod +x /opt/bin/docker-compose
