@@ -39,21 +39,6 @@ If you want to make docker-compose work with previous versions of CoreOS, you ne
 
 [See this](https://github.com/docker/compose/releases) for more details on how to do this.
 
-# Security
-
-Piping commands from internet to shell is considered bad practice, 
-and there is lot of discussion on the internet:
-
-* [Hacker News Discussion](https://news.ycombinator.com/item?id=12766049)
-* [Don't Pipe to your Shell](https://www.seancassidy.me/dont-pipe-to-your-shell.html)
-* [The Truth About Curl and Installing Software Securely on Linux](https://medium.com/@esotericmeans/the-truth-about-curl-and-installing-software-securely-on-linux-63cd12e7befd)
-
-But this was done anyway because of the convenience factor (there is no way to be more straightforward than this),
-please, feel free to review and open an Issue.
-
-This security tip was given to me by a friend after I saw his repo of termux tools.
-https://github.com/onlurking/termux
-
 <a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/fs3bBt7nP9jn4VLgZERmuNMy/Kuchiriel/coreos-configs'>
   <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/fs3bBt7nP9jn4VLgZERmuNMy/Kuchiriel/coreos-configs.svg' />
 </a>
