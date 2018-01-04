@@ -38,7 +38,3 @@ If you want to make docker-compose work with previous versions of CoreOS, you ne
 ![](https://i.imgur.com/JZbKTnE.png)
 
 [See this](https://github.com/docker/compose/releases) for more details on how to do this.
-
-<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/fs3bBt7nP9jn4VLgZERmuNMy/Kuchiriel/coreos-configs'>
-  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/fs3bBt7nP9jn4VLgZERmuNMy/Kuchiriel/coreos-configs.svg' />
-</a>
