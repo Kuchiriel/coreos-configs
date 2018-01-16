@@ -1,0 +1,21 @@
+#cloud-config
+
+# coreos-cloudinit -validate --from-file noip2.cloud-config
+# sudo coreos-cloudinit --from-file noip2.cloud-config
+# sudo coreos-cloudinit --from-url https://github.com/Kuchiriel/coreos-configs/raw/master/noip2.cloud-config
+
+coreos:
+  units:
+    - name: install-noip2.service
+      command: start
+      content: |
+        [Unit]
+        Description=Install No-IP Dynamic DNS Update Client
+        [Service]
+        Type=forking
+        ExecStart=/usr/bin/mkdir -p /opt/bin/
+        ExecStart=/usr/bin/curl -o /opt/bin/noip2 -sL "http://www.no-ip.com/client/linux/noip-duc-linux.tar.gz"
+        ExecStart=/usr/bin/tar xvz /opt/bin/noip2/noip-duc-linux.tar.gz
+        ExecStart=/usr/bin/make install /opt/bin/noip2/noip-duc-linux
+        ExecStart=/usr/bin/chmod +x /usr/local/bin/noip2
+        ExecStart=/usr/local/bin/noip2 -c /usr/local/etc/no-ip2.conf
