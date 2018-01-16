@@ -13,9 +13,10 @@ coreos:
         Description=Install No-IP Dynamic DNS Update Client
         [Service]
         Type=oneshot
-        ExecStart=/usr/bin/mkdir -p /opt/bin/
-        ExecStart=/usr/bin/curl -o /opt/bin/noip2 -sL "http://www.no-ip.com/client/linux/noip-duc-linux.tar.gz"
+        ExecStart=/usr/bin/mkdir -p /opt/bin/noip2
+        ExecStart=/usr/bin/wget -o /opt/bin/noip2 -sL "http://www.no-ip.com/client/linux/noip-duc-linux.tar.gz"
         ExecStart=/usr/bin/tar xvz /opt/bin/noip2/noip-duc-linux.tar.gz
-        ExecStart=/usr/bin/make install /opt/bin/noip2/noip-duc-linux
+        ExecStart=/usr/bin/cd /opt/bin/noip2/noip-duc-linux
+        ExecStart=/usr/bin/make install
         ExecStart=/usr/bin/chmod +x /usr/local/bin/noip2
         ExecStart=/usr/local/bin/noip2 -c /usr/local/etc/no-ip2.conf
