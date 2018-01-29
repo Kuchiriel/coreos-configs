@@ -13,5 +13,7 @@ coreos:
         Description=Install docker-compose
         [Service]
         Type=oneshot
-        ExecStart=/usr/bin/curl -L https://github.com/docker/compose/releases/download/1.19.0-rc2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
-        ExecStart=/usr/bin/chmod +x /usr/local/bin/docker-compose
+        ExecStart=/usr/bin/mkdir -p /opt/bin/
+        ExecStart=/usr/bin/curl -o /opt/bin/docker-compose -sL "https://github.com/docker/compose/releases/download/1.19.0-rc2/docker-compose-Linux-x86_64"
+        ExecStart=/usr/bin/chmod +x /opt/bin/docker-compose
+        
