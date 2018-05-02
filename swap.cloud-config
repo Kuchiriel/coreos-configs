@@ -18,7 +18,6 @@ coreos:
         Type=oneshot
         Environment="SWAPFILE=/2GiB.swap"
         ExecStart=/usr/bin/touch ${SWAPFILE}
-        ExecStart=/usr/bin/chattr +C ${SWAPFILE}
         ExecStart=/usr/bin/fallocate -l 2048m ${SWAPFILE}
         ExecStart=/usr/bin/chmod 600 ${SWAPFILE}
         ExecStart=/usr/sbin/mkswap ${SWAPFILE}
