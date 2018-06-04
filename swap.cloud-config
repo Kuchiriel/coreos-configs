@@ -21,7 +21,7 @@ coreos:
         ExecStart=/usr/bin/fallocate -l 2048m ${SWAPFILE}
         ExecStart=/usr/bin/chmod 600 ${SWAPFILE}
         ExecStart=/usr/sbin/mkswap ${SWAPFILE}
-
+        
         [Install]
         WantedBy=multi-user.target
     - name: swap.service
@@ -29,7 +29,7 @@ coreos:
       content: |
         [Unit]
         Description=Turn on swap
-
+        
         [Service]
         Type=oneshot
         Environment="SWAPFILE=/2GiB.swap"
@@ -38,3 +38,11 @@ coreos:
         ExecStart=/usr/bin/sh -c "/sbin/swapon $(/usr/sbin/losetup -j ${SWAPFILE} | /usr/bin/cut -d : -f 1)"
         ExecStop=/usr/bin/sh -c "/sbin/swapoff $(/usr/sbin/losetup -j ${SWAPFILE} | /usr/bin/cut -d : -f 1)"
         ExecStopPost=/usr/bin/sh -c "/usr/sbin/losetup -d $(/usr/sbin/losetup -j ${SWAPFILE} | /usr/bin/cut -d : -f 1)"
+        
+write_files:
+  - path: /etc/sysctl.d/swap.conf
+    permissions: 0644
+    owner: root
+    content: |
+      vm.swappiness=10
+      vm.vfs_cache_pressure=50
