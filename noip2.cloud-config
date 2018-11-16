@@ -14,8 +14,9 @@ coreos:
         [Service]
         Type=oneshot
         ExecStart=/usr/bin/mkdir -p /opt/bin/noip2
-        ExecStart=/usr/bin/wget -o /opt/bin/noip2 -sL "http://www.no-ip.com/client/linux/noip-duc-linux.tar.gz"
-        ExecStart=/usr/bin/tar xvz /opt/bin/noip2/noip-duc-linux.tar.gz
+        ExecStart=/usr/bin/wget "http://www.no-ip.com/client/linux/noip-duc-linux.tar.gz
+        ExecStart=/usr/bin/mv noip-duc-linux.tar.gz /opt/bin/noip2
+        ExecStart=/usr/bin/tar -xvzf /opt/bin/noip2/noip-duc-linux.tar.gz
         ExecStart=/usr/bin/cd /opt/bin/noip2/noip-duc-linux
         ExecStart=/usr/bin/make install
         ExecStart=/usr/bin/chmod +x /usr/local/bin/noip2
